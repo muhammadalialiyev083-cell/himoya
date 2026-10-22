@@ -2,6 +2,8 @@
 
 ## Windows EXE — GitHub orqali yuklab olish
 
+Eng qulay yo‘l: [GitHub Releases](https://github.com/muhammadalialiyev083-cell/himoya/releases) sahifasida muvaffaqiyatli yig‘ilgan Windows MVP relizini ochib, **Assets → UzluksizBCMS.exe**ni yuklab oling. Reliz faqat avtomatik sinovlar va paket tekshiruvlari o‘tgandan keyin chiqariladi. Agar reliz hali ko‘rinmasa, quyidagi Actions sahifasida yig‘ish holatini tekshiring.
+
 1. [Actions / Build Windows EXE](https://github.com/muhammadalialiyev083-cell/himoya/actions/workflows/windows-build.yml) sahifasini oching va GitHub hisobingizga kiring.
 2. Eng yangi yig‘ish muvaffaqiyatli tugaganini (yashil belgi) tekshiring. Xato yoki navbat holatida EXE hali tayyor emas.
 3. Yig‘ish sahifasining **Artifacts** bo‘limidan **UzluksizBCMS-Windows-x64** faylini yuklab oling.

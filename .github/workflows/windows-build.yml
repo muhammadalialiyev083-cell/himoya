@@ -62,3 +62,39 @@ jobs:
             release/win32-package-verification.json
             release/packaged-smoke-*/result.json
           if-no-files-found: error
+  release:
+    needs: windows
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: UzluksizBCMS-Windows-x64
+          path: package
+      - name: Publish tested Windows build for direct download
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+          RELEASE_TAG: windows-mvp-${{ github.run_number }}
+          RELEASE_COMMIT: ${{ github.sha }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -f package/dist/UzluksizBCMS.exe
+          cat > release-notes.md <<'NOTES'
+          Windows 10/11 x64 one-file PyInstaller build of UzluksizBCMS Desktop 1.0.0 MVP.
+
+          Download UzluksizBCMS.exe below. End users do not need Python.
+
+          This build passed the automated Windows test suite and a packaged Qt/SQLite/authentication/restart/backup/PDF/CSV smoke test. The GUI check uses Qt's offscreen platform; native interactive Windows and display-scaling sign-off remains a separate manual check. See docs/WINDOWS_RELEASE.md.
+
+          The application is unsigned. No database encryption, ISO certification or DGU registration is claimed.
+          NOTES
+          gh release create "$RELEASE_TAG" \
+            package/dist/UzluksizBCMS.exe \
+            package/release/win32-package-verification.json \
+            package/release/windows-test-results.xml \
+            --repo "$GH_REPO" --target "$RELEASE_COMMIT" --prerelease \
+            --title 'UzluksizBCMS Desktop 1.0.0 — Windows MVP' \
+            --notes-file release-notes.md
