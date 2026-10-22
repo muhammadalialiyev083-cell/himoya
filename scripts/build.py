@@ -29,6 +29,7 @@ def main():
              "--specpath",str(ROOT/"build"),"--paths",str(ROOT),
              "--add-data",f"{ROOT/'app/database/schema.sql'}:app/database",
              "--add-data",f"{ROOT/'app/resources/icon.svg'}:app/resources",
+             "--add-data",f"{ROOT/'app/resources/fonts'}:app/resources/fonts",
              "--exclude-module","PySide6.QtWebEngineCore","--exclude-module","PySide6.QtWebEngineWidgets",
              "--exclude-module","PySide6.QtQml","--exclude-module","PySide6.QtQuick"]
     if args.target=="windows":

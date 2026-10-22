@@ -9,6 +9,7 @@ from PySide6.QtCore import QMarginsF
 from PySide6.QtGui import QFont, QPageLayout, QPageSize, QPdfWriter, QTextDocument
 
 from app.algorithms.scoring import CATEGORIES
+from app.core.fonts import report_font
 
 
 def snapshot(service):
@@ -76,7 +77,7 @@ def report_html(data, kind="assessment", plan_id=None):
             if any(p["readiness"] != "Tayyor" for p in data["plans"]):
                 body += '<p>Rejalarni tasdiqlang, resurslar va bosqichlarni to‘ldiring, ko‘rib chiqish sanasini yangilang.</p>'
     body += '<h3>Metodologiya</h3><p>BIA = 20 × (0.30 × moliyaviy + 0.35 × operatsion + 0.20 × obro‘ + 0.15 × muvofiqlik). Kirishlar: 0–5. Chegaralar: 75 — kritik, 50 — yuqori, 25 — o‘rta; undan past — past. Teng ball: qisqaroq RTO birinchi.</p><p>Risk = ehtimollik × ta’sir (1–5). 1–5: past; 6–10: o‘rta; 11–15: yuqori; 16–25: kritik. Uzilish RTO yoki MTPDdan qat’iy katta bo‘lsa, tegishli maqsad buziladi. Resurslar qayd etiladi, vaqt kamayishi taxmin qilinmaydi. BIA bo‘lmasa, natija noma’lum.</p><p>Ushbu vazn va chegaralar dastur uchun belgilangan tadqiqot parametrlaridir. Ular rasmiy ISO formulalari emas. ISO sertifikati, to‘liq muvofiqlik yoki tajribada tasdiqlangan aniqlik da’vo qilinmaydi. NAMUNA yozuvlari haqiqiy tadqiqot natijalari emas. SQLite bazasi shifrlanmagan.</p>'
-    return '<html><head><meta charset="utf-8"><style>body{font-family:"Segoe UI","DejaVu Sans",sans-serif;color:#162b40;font-size:10pt}h1{color:#087f73;font-size:21pt}h2{font-size:15pt}h3{color:#087f73}th{background:#133248;color:white;text-align:left}td{border-bottom:1px solid #dbe4e9}p{line-height:1.5}</style></head><body>'+body+'</body></html>'
+    return '<html><head><meta charset="utf-8"><style>body{font-family:"Noto Sans",sans-serif;color:#162b40;font-size:10pt}h1{color:#087f73;font-size:21pt}h2{font-size:15pt}h3{color:#087f73}th{background:#133248;color:white;text-align:left}td{border-bottom:1px solid #dbe4e9}p{line-height:1.5}</style></head><body>'+body+'</body></html>'
 
 
 def write_pdf(path, data, kind="assessment", plan_id=None):
@@ -88,7 +89,7 @@ def write_pdf(path, data, kind="assessment", plan_id=None):
     writer.setPageSize(QPageSize(QPageSize.PageSizeId.A4))
     writer.setPageMargins(QMarginsF(14,14,14,14), QPageLayout.Unit.Millimeter)
     doc = QTextDocument()
-    doc.setDefaultFont(QFont("Segoe UI" if os.name == "nt" else "DejaVu Sans", 10))
+    doc.setDefaultFont(QFont(report_font(), 10))
     doc.setHtml(report_html(data, kind, plan_id))
     doc.print_(writer)
     del doc, writer

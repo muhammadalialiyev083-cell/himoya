@@ -2,7 +2,7 @@
 
 Workspace: `/workspace/UzluksizBCMS-Desktop`, independent of `/workspace/himoya`.
 
-The native Qt application implements all seven functional modules with SQLite, administrator authentication, backup/restore, optional marked demo data, Uzbek interface, charts, PDF/CSV exports and supporting documentation. **78 automated tests passed**. See `docs/TEST_RESULTS.md` and `release/test-results.xml`.
+The native Qt application implements all seven functional modules with SQLite, administrator authentication, backup/restore, optional marked demo data, Uzbek interface, charts, PDF/CSV exports and supporting documentation. **79 automated tests passed**. See `docs/TEST_RESULTS.md` and `release/test-results.xml`.
 
 Windows user database: `%LOCALAPPDATA%\UzluksizBCMS\uzluksiz.sqlite3` (created at first normal launch). No normal business database or default password is preinstalled. Example/smoke databases are isolated test artifacts.
 
@@ -15,3 +15,5 @@ On Windows 10/11 x64, extract `UzluksizBCMS-Desktop-1.0.0-source.zip` into a new
 Deferred scope includes multiple accounts/roles, encrypted database, cloud sync, automatic scheduling, resource-capacity simulation, MSI installation, signing and automatic updates. See `docs/KNOWN_LIMITATIONS.md`. No DGU registration or ISO certification is claimed.
 
 Cloud `install_script` and `start_skill` were saved as a draft. To retain this prepared cloud setup, review and save those changes in environment settings, then publish the environment. Draft persistence is confirmed; publication/new-task restoration has not been performed or verified.
+
+GitHub delivery follow-up: the owner authorized publishing this project to the initially empty himoya repository. Source download: https://github.com/muhammadalialiyev083-cell/himoya/archive/refs/heads/main.zip . Windows builds and test-gated prereleases: https://github.com/muhammadalialiyev083-cell/himoya/releases . Check a successful current run for Windows evidence; the initial Linux-only status above describes the original preparation environment.

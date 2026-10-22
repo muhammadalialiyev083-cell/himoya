@@ -1,5 +1,5 @@
 STYLE = """
-* { font-family: 'Segoe UI', 'DejaVu Sans'; font-size: 12px; }
+* { font-family: 'Segoe UI', 'Noto Sans', 'DejaVu Sans'; font-size: 12px; }
 QMainWindow, QDialog { background: #f3f6fa; color: #182e43; }
 QWidget#sidebar { background: #102b40; }
 QLabel#brand { color: white; font-size: 23px; font-weight: 700; }

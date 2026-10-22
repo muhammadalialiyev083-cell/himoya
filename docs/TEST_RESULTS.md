@@ -11,13 +11,13 @@ QT_QPA_PLATFORM=offscreen XDG_CACHE_HOME="$PWD/.cache" \
   .venv/bin/python -m pytest -q --junitxml=release/test-results.xml
 ```
 
-**78 passed; 0 failed; 0 errors; 0 skipped.** The final run took approximately 4 seconds. The machine-readable runner evidence is `release/test-results.xml`; each parametrized case actually executed. Test databases and temporary exports are kept under the project's `.test-data` directory.
+**79 passed; 0 failed; 0 errors; 0 skipped.** The final run took approximately 4 seconds. The machine-readable runner evidence is `release/test-results.xml`; each parametrized case actually executed. Test databases and temporary exports are kept under the project's `.test-data` directory.
 
 | Area | Executed cases | Outcome |
 | --- | ---: | --- |
 | BIA weights, threshold edges, invalid impacts/targets, risk boundaries, disruption equality/violation/unknown rules | 51 | Passed |
 | Initialization, parameterized CRUD, foreign keys, uniqueness, atomic rollback, ranking tie-breaks, persistence, backup/restore, corrupted/future databases, authentication, link consistency and readiness | 17 | Passed |
-| Three real PDF report types, extracted Uzbek glyphs and values, CSV Unicode/formula protection, escaped HTML and empty reports | 7 | Passed |
+| Three real PDF report types, extracted Uzbek glyphs and values, CSV Unicode/formula protection, escaped HTML and empty reports | 8 | Passed |
 | Full Qt form workflow and delete confirmation/cascade effects | 2 | Passed |
 | Isolated application smoke with Python network connections denied; refusal to overwrite prior evidence | 1 | Passed |
 
@@ -51,4 +51,8 @@ The offline smoke test denies Python socket connections during the full workflow
 | Clean Windows machine without Python | Unrun |
 | DGU registration / ISO certification | Not claimed |
 
-The MVP implementation is testable here, but Windows distribution acceptance is **not complete**. Run `build.ps1` on Windows and follow `docs/WINDOWS_RELEASE.md` to close those release gates. Earlier development failures were fixed before the final 78-case run; the final XML records the final outcome.
+The MVP implementation is testable here, but Windows distribution acceptance is **not complete**. Run `build.ps1` on Windows and follow `docs/WINDOWS_RELEASE.md` to close those release gates. Earlier development failures were fixed before the final 79-case run; the final XML records the final outcome.
+
+## Windows portability follow-up
+
+The first native Windows run exposed a PyInstaller/pefile version conflict and missing PDF text on the offscreen platform. The supported pefile 2023.2.7 pin and a bundled licensed Noto Sans font resolve these prerequisites without weakening assertions or disabling verification. The final source test suite includes a font-load check (79 cases). Current Windows build results and actual EXE downloads are published by GitHub Actions/Releases, independently of this historical Linux evidence.

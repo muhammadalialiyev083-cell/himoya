@@ -2,6 +2,11 @@ import csv
 import pytest
 from pypdf import PdfReader
 from app.reports.export import snapshot,write_pdf,write_csv,report_html
+from app.core.fonts import report_font
+
+
+def test_bundled_report_font_is_loaded(qapp):
+    assert report_font()=="Noto Sans"
 
 
 @pytest.mark.parametrize("kind",["assessment","register","plan"])

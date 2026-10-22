@@ -11,6 +11,7 @@ if not getattr(sys,"frozen",False):
 from PySide6.QtWidgets import QApplication, QMessageBox
 from PySide6.QtCore import QLockFile
 from app.core.config import data_directory
+from app.core.fonts import report_font
 from app.database.store import Database
 from app.services.auth import Authentication
 from app.ui.forms import authenticate
@@ -23,6 +24,7 @@ def main():
     parser.add_argument("--self-test-dir",type=Path,help="Run isolated packaged smoke test in a new directory")
     args=parser.parse_args()
     application=QApplication(sys.argv[:1])
+    report_font()
     application.setApplicationName("UzluksizBCMS")
     application.setOrganizationName("UzluksizBCMS")
     application.setStyle("Fusion")

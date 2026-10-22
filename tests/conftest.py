@@ -6,11 +6,13 @@ from PySide6.QtWidgets import QApplication
 from app.database.store import Database
 from app.services.bcms import BCMS
 from app.ui.style import STYLE
+from app.core.fonts import report_font
 
 
 @pytest.fixture(scope="session")
 def qapp():
     application=QApplication.instance() or QApplication([])
+    report_font()
     application.setStyle("Fusion")
     application.setStyleSheet(STYLE)
     yield application
