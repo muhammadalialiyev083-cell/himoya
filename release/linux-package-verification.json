@@ -1,0 +1,10 @@
+{
+  "binary": "/workspace/UzluksizBCMS-Desktop/dist/UzluksizBCMS",
+  "bytes": 74625768,
+  "sha256": "515dd7b6a09cab6a9f3149ae93be6fca4a7f641e7c41074ef198ec0e842f3298",
+  "result_directory": "/workspace/UzluksizBCMS-Desktop/release/packaged-smoke-20261022-133919-313640",
+  "status": "passed",
+  "host": "linux",
+  "windows_interactive_verified": false,
+  "note": "Headless executable smoke test; interactive Windows verification remains a separate release gate."
+}

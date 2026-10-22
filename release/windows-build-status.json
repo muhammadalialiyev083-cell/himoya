@@ -1,0 +1,7 @@
+{
+  "status": "blocked",
+  "target": "windows",
+  "host": "Linux",
+  "reason": "PyInstaller requires a native target-OS Python environment; cross-compilation is unsupported.",
+  "windows_exe_exists": false
+}

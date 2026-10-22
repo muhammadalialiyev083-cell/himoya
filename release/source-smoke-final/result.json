@@ -1,0 +1,28 @@
+{
+  "status": "passed",
+  "version": "1.0.0",
+  "platform": "linux",
+  "qt_window": true,
+  "pages": 9,
+  "authentication": true,
+  "restart_persistence": true,
+  "backup_restore": true,
+  "metrics": {
+    "departments": 1,
+    "processes": 1,
+    "critical": 1,
+    "bia": 1,
+    "high_risks": 1,
+    "plans": 1,
+    "scenarios": 1,
+    "assessments": 1
+  },
+  "exports": [
+    "assessment.pdf",
+    "register.pdf",
+    "plan.pdf",
+    "register.csv"
+  ],
+  "network_required": false,
+  "note": "Automated Qt smoke test; interactive Windows sign-off is separate."
+}

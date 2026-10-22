@@ -1,0 +1,13 @@
+.venv/
+.cache/
+__pycache__/
+.pytest_cache/
+*.pyc
+build/
+dist/
+.test-data/
+*.spec
+
+release/packaged-smoke-*/
+release/*smoke*/*.sqlite3
+release/*smoke*/backups/
