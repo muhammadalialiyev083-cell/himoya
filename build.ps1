@@ -9,7 +9,12 @@ $OldQt = $env:QT_QPA_PLATFORM
 try {
     $env:PIP_CACHE_DIR = Join-Path $Root '.cache\pip'
     if (!(Test-Path '.venv\Scripts\python.exe')) {
-        & py -3.12 -m venv .venv
+        if ($env:pythonLocation -and (Test-Path (Join-Path $env:pythonLocation 'python.exe'))) {
+            # actions/setup-python supplies a tool-cache interpreter, not a py-launcher registration.
+            & (Join-Path $env:pythonLocation 'python.exe') -m venv .venv
+        } else {
+            & py -3.12 -m venv .venv
+        }
         if ($LASTEXITCODE -ne 0) { throw 'Install Python 3.12 x64 for the build machine.' }
     }
     $Python = Join-Path $Root '.venv\Scripts\python.exe'

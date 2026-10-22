@@ -6,6 +6,9 @@ on:
     tags: ['v*']
 permissions:
   contents: read
+concurrency:
+  group: windows-build-${{ github.ref }}
+  cancel-in-progress: true
 jobs:
   windows:
     runs-on: windows-2022
@@ -17,7 +20,28 @@ jobs:
           architecture: x64
       - name: Build and verify Windows executable
         shell: pwsh
-        run: ./build.ps1
+        run: |
+          New-Item -ItemType Directory -Force release | Out-Null
+          try {
+            & ./build.ps1 *>&1 | Tee-Object -FilePath release/ci-build.log
+            if ($LASTEXITCODE -ne 0) { throw "Build returned $LASTEXITCODE" }
+          } catch {
+            $_ | Out-String | Add-Content release/ci-build.log
+            '### Windows build failed' | Add-Content $env:GITHUB_STEP_SUMMARY
+            '```text' | Add-Content $env:GITHUB_STEP_SUMMARY
+            Get-Content release/ci-build.log -Tail 65 | Add-Content $env:GITHUB_STEP_SUMMARY
+            '```' | Add-Content $env:GITHUB_STEP_SUMMARY
+            exit 1
+          }
+      - name: Record successful packaged verification
+        if: success()
+        shell: pwsh
+        run: |
+          '### Windows EXE built and automated checks passed' | Add-Content $env:GITHUB_STEP_SUMMARY
+          'Download UzluksizBCMS-Windows-x64 from this run''s Artifacts section.' | Add-Content $env:GITHUB_STEP_SUMMARY
+          '```json' | Add-Content $env:GITHUB_STEP_SUMMARY
+          Get-Content release/win32-package-verification.json | Add-Content $env:GITHUB_STEP_SUMMARY
+          '```' | Add-Content $env:GITHUB_STEP_SUMMARY
       - uses: actions/upload-artifact@v4
         with:
           name: UzluksizBCMS-Windows-x64

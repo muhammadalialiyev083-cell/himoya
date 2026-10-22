@@ -1,8 +1,17 @@
 # UzluksizBCMS Desktop 1.0.0 MVP
 
+## Windows EXE — GitHub orqali yuklab olish
+
+1. [Actions / Build Windows EXE](https://github.com/muhammadalialiyev083-cell/himoya/actions/workflows/windows-build.yml) sahifasini oching va GitHub hisobingizga kiring.
+2. Eng yangi yig‘ish muvaffaqiyatli tugaganini (yashil belgi) tekshiring. Xato yoki navbat holatida EXE hali tayyor emas.
+3. Yig‘ish sahifasining **Artifacts** bo‘limidan **UzluksizBCMS-Windows-x64** faylini yuklab oling.
+4. ZIPni oching; `dist/UzluksizBCMS.exe` — Windows dasturi. Foydalanuvchiga Python o‘rnatish kerak emas.
+
+Faqat manba kodi kerak bo‘lsa: [Download ZIP](https://github.com/muhammadalialiyev083-cell/himoya/archive/refs/heads/main.zip). Bu ZIP tayyor Windows EXE emas. Yig‘ish avtomatik `main`ga push qilinganda yoki Actionsdagi `Run workflow` orqali ishlaydi. Artefaktni yuklash uchun GitHubga kirish talab qilinishi mumkin.
+
 Offline-first, native PySide6/Qt Widgets business continuity research application. The interface is Uzbek Latin. All business records are stored in a local SQLite database; there is no server, browser frontend, online database, telemetry or API key.
 
-**Delivery status:** implemented and tested on Linux with Qt's offscreen platform. Windows compilation and interactive Windows launch have **not** been performed in this Linux environment. `dist/UzluksizBCMS.exe` is produced only by running the supplied build on Windows 10/11 x64. Do not rename the Linux executable to `.exe`.
+**Delivery status:** implemented and tested on Linux with Qt's offscreen platform. Windows compilation is performed separately by the GitHub Actions Windows runner. Check the latest run and its actual artifacts for its outcome; the initial Linux test documents do not establish Windows success. Native interactive Windows sign-off remains separate. Do not rename the Linux executable to `.exe`.
 
 ## Start from source
 
@@ -68,7 +77,7 @@ On a Windows 10/11 x64 build machine with Python 3.12 x64:
 
 This installs project-local dependencies, runs tests, renders the application icon, builds a real windowed one-file PyInstaller executable, launches that executable in an isolated smoke test, validates its database persistence and PDF/CSV exports, and reports SHA-256 and file size. End users only need the resulting `dist\UzluksizBCMS.exe`; they do not need Python or the development venv. Read [Windows release verification](docs/WINDOWS_RELEASE.md) before sign-off.
 
-An optional GitHub Actions workflow is supplied in `.github/workflows/windows-build.yml`. It has not been uploaded or executed here. The existing `himoya` repository is untouched. Put this new standalone project into a new repository yourself if you choose to use hosted CI.
+The GitHub Actions workflow in `.github/workflows/windows-build.yml` builds on Windows after a push to `main` and supports manual dispatch. The owner explicitly authorized uploading this standalone project into the initially empty `himoya` repository after the in-chat artifact download failed. No pre-existing application code was replaced.
 
 ## Documentation
 
