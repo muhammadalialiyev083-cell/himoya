@@ -33,6 +33,17 @@ jobs:
             '```' | Add-Content $env:GITHUB_STEP_SUMMARY
             exit 1
           }
+      - name: Publish failure diagnostic
+        if: failure()
+        shell: pwsh
+        run: |
+          if (Test-Path release/ci-build.log) {
+            $message = (Get-Content release/ci-build.log -Tail 50) -join "`n"
+          } else {
+            $message = 'No build transcript was created; failure preceded application build.'
+          }
+          $message = $message.Replace('%', '%25').Replace("`r", '%0D').Replace("`n", '%0A')
+          Write-Output "::error title=Windows build diagnostics::$message"
       - name: Record successful packaged verification
         if: success()
         shell: pwsh
