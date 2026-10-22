@@ -1,8 +1,8 @@
 {
   "binary": "/workspace/UzluksizBCMS-Desktop/dist/UzluksizBCMS",
-  "bytes": 74625768,
-  "sha256": "515dd7b6a09cab6a9f3149ae93be6fca4a7f641e7c41074ef198ec0e842f3298",
-  "result_directory": "/workspace/UzluksizBCMS-Desktop/release/packaged-smoke-20261022-133919-313640",
+  "bytes": 74909776,
+  "sha256": "a5b11906d6715a5be6ae7109e4c045756382a3ba529ff07085ff26eb9bef1f3d",
+  "result_directory": "/workspace/UzluksizBCMS-Desktop/release/packaged-smoke-20261022-140705-627805",
   "status": "passed",
   "host": "linux",
   "windows_interactive_verified": false,

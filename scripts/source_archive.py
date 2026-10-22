@@ -12,7 +12,7 @@ for folder in ("app","tests","docs","scripts","assets",".github"):
             included.append(path)
 for name in ("README.md","USER_MANUAL.md","requirements.txt","requirements-dev.txt","requirements-lock.txt","requirements-windows.txt","pytest.ini","build.ps1",".gitignore"):
     included.append(root/name)
-for name in ("test-results.xml","windows-build-status.json","linux-package-verification.json","DELIVERY.md"):
+for name in ("test-results.xml","windows-build-status.json","linux-package-verification.json","win32-package-verification.json","windows-test-results.xml","DELIVERY.md"):
     path=root/"release"/name
     if path.is_file():included.append(path)
 for name in ("dashboard.png","assessment.pdf","register.pdf","plan.pdf","register.csv","result.json"):

@@ -1,10 +1,17 @@
 # Windows build and release verification
 
-## Current status
+## Current verified status
 
-The implementation environment is Linux x86_64 with Python 3.12.14. No Windows VM, Windows Python runtime, Windows desktop or Wine is attached. A Windows-target build invocation was made through `scripts/build.py --target windows`; it exited 2 with the documented native-target requirement. PyInstaller cannot cross-compile a Windows PE executable from a Linux Python installation. See `release/windows-build-status.json`.
+The real Windows x64 one-file EXE was compiled on GitHub Actions and published as an MVP prerelease. **79 Windows tests passed, with no failures or skips**. Its packaged Qt offscreen launch, authentication, SQLite, backup/restore, PDF/CSV and close/reopen checks passed. Native interactive Windows and clean-machine sign-off remain outstanding.
 
-**No Windows EXE has been compiled here. Windows size, launch, persistence and offline acceptance remain unverified.** A Linux one-file binary, when present, is packaging evidence for Linux only.
+- [Download UzluksizBCMS.exe](https://github.com/muhammadalialiyev083-cell/himoya/releases/download/windows-mvp-6/UzluksizBCMS.exe)
+- [Release and runner evidence](https://github.com/muhammadalialiyev083-cell/himoya/releases/tag/windows-mvp-6)
+- Size: **50,674,955 bytes**.
+- SHA-256: `82c8946f8d265aff070070e8d9f65bca5ee456bb63c924c3f4708432bb24d6ef`.
+
+The Linux host independently downloaded the actual released EXE with HTTP 200, matched its size/hash, verified x64 GUI PE headers and inspected the bundled Python runtime, qwindows plugin, schema and Noto font. Execution evidence comes from the native Windows runner; this Linux host cannot execute Windows software.
+
+The initial Windows-only pefile conflict and missing offscreen PDF font were fixed without weakening assertions or disabling verification. The native runner became available after the owner authorized publishing this project to GitHub.
 
 ## Build on Windows 10/11 x64
 

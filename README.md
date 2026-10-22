@@ -2,6 +2,8 @@
 
 ## Windows EXE — GitHub orqali yuklab olish
 
+**Tayyor Windows EXE:** [UzluksizBCMS.exe — yuklab olish](https://github.com/muhammadalialiyev083-cell/himoya/releases/download/windows-mvp-6/UzluksizBCMS.exe) (50,674,955 bayt). Ushbu reliz Windows’da 79 avtomatik sinov va tayyor paket tekshiruvidan o‘tgan. Bevosita interaktiv Windows tekshiruvi alohida qoladi.
+
 Eng qulay yo‘l: [GitHub Releases](https://github.com/muhammadalialiyev083-cell/himoya/releases) sahifasida muvaffaqiyatli yig‘ilgan Windows MVP relizini ochib, **Assets → UzluksizBCMS.exe**ni yuklab oling. Reliz faqat avtomatik sinovlar va paket tekshiruvlari o‘tgandan keyin chiqariladi. Agar reliz hali ko‘rinmasa, quyidagi Actions sahifasida yig‘ish holatini tekshiring.
 
 1. [Actions / Build Windows EXE](https://github.com/muhammadalialiyev083-cell/himoya/actions/workflows/windows-build.yml) sahifasini oching va GitHub hisobingizga kiring.

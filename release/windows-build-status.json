@@ -1,7 +1,11 @@
 {
-  "status": "blocked",
-  "target": "windows",
-  "host": "Linux",
-  "reason": "PyInstaller requires a native target-OS Python environment; cross-compilation is unsupported.",
-  "windows_exe_exists": false
+  "status": "built-and-automated-verification-passed",
+  "target": "windows-x64",
+  "builder": "GitHub Actions windows-2022",
+  "download": "https://github.com/muhammadalialiyev083-cell/himoya/releases/download/windows-mvp-6/UzluksizBCMS.exe",
+  "release": "https://github.com/muhammadalialiyev083-cell/himoya/releases/tag/windows-mvp-6",
+  "bytes": 50674955,
+  "sha256": "82c8946f8d265aff070070e8d9f65bca5ee456bb63c924c3f4708432bb24d6ef",
+  "tests": 79,
+  "interactive_windows_verified": false
 }

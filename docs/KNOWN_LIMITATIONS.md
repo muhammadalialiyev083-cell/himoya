@@ -1,6 +1,6 @@
 # Known limitations and deferred scope
 
-- Windows compilation and native interactive verification require Windows and remain outstanding in this Linux workspace. No Windows executable, size or Windows launch success is claimed.
+- Native Windows compilation, all 79 automated tests and packaged offscreen launch/export/persistence checks passed in GitHub Actions. Native interactive Windows and clean-machine sign-off remain outstanding. See `WINDOWS_RELEASE.md` for the actual EXE size/hash and download.
 - Interactive physical-display QA is unrun here; Qt offscreen widgets, form actions, screenshots and PDF rendering are tested. Font rendering and display scaling on actual Windows need release sign-off.
 - Single local administrator and one organization; no role management, multi-user server, cloud sync or concurrent shared-database editing. The normal app locks its data directory.
 - The password gates the UI; SQLite and backups are unencrypted. OS users who can read/modify the database have access to the data. There is no password-recovery backdoor.

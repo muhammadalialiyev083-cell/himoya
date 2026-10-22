@@ -1,0 +1,10 @@
+{
+  "binary": "D:\\a\\himoya\\himoya\\dist\\UzluksizBCMS.exe",
+  "bytes": 50674955,
+  "sha256": "82c8946f8d265aff070070e8d9f65bca5ee456bb63c924c3f4708432bb24d6ef",
+  "result_directory": "D:\\a\\himoya\\himoya\\release\\packaged-smoke-20261022-140603-219511",
+  "status": "passed",
+  "host": "win32",
+  "windows_interactive_verified": false,
+  "note": "Headless executable smoke test; interactive Windows verification remains a separate release gate."
+}

@@ -44,15 +44,19 @@ The offline smoke test denies Python socket connections during the full workflow
 | Check | Result |
 | --- | --- |
 | Windows-target packaging invocation on this Linux host | Blocked with exit 2; native Windows Python is required |
-| Actual Windows PE/EXE build | Unrun; no Windows host attached |
-| Windows EXE size/hash | Unavailable; no EXE exists here |
+| Actual Windows PE/EXE build | Passed on GitHub Actions Windows runner |
+| Windows EXE size/hash | 50,674,955 bytes; exact SHA-256 independently matched |
 | Native Windows GUI, no-console startup and scaling | Unrun |
-| Packaged Windows persistence/PDF/CSV/offline checks | Unrun; automated pipeline and manual procedure supplied |
+| Packaged Windows persistence/PDF/CSV checks | Passed in Qt offscreen mode; physical disconnected-machine check unrun |
 | Clean Windows machine without Python | Unrun |
 | DGU registration / ISO certification | Not claimed |
 
-The MVP implementation is testable here, but Windows distribution acceptance is **not complete**. Run `build.ps1` on Windows and follow `docs/WINDOWS_RELEASE.md` to close those release gates. Earlier development failures were fixed before the final 79-case run; the final XML records the final outcome.
+Native Windows compilation and automated package checks are complete. Interactive Windows release sign-off remains outstanding; follow `docs/WINDOWS_RELEASE.md`. Earlier development failures were fixed before the final 79-case run; the final XML records the final outcome.
 
 ## Windows portability follow-up
 
 The first native Windows run exposed a PyInstaller/pefile version conflict and missing PDF text on the offscreen platform. The supported pefile 2023.2.7 pin and a bundled licensed Noto Sans font resolve these prerequisites without weakening assertions or disabling verification. The final source test suite includes a font-load check (79 cases). Current Windows build results and actual EXE downloads are published by GitHub Actions/Releases, independently of this historical Linux evidence.
+
+## Final Windows evidence
+
+The native Windows suite executed **79 cases: 0 failures, 0 errors, 0 skips**, in 8.843 seconds. The built EXE passed the isolated packaged smoke test. Its published size/SHA-256 and x64 GUI PE headers were independently verified. Exact results are in `release/windows-test-results.xml` and `release/win32-package-verification.json`. Physical interactive/offline Windows testing remains a separate release gate.
