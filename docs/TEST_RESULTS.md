@@ -1,3 +1,15 @@
+# UzHi 1.1.0 verification
+
+Baseline on this Linux Python 3.12 host: 79 passed. After the redesign, **92 tests passed** on Linux (0 failed or skipped); see the current CI XML for platform-specific results. The original scientific expectations and assertions are retained. Additional tests cover first-run/login validation, password visibility, Enter/Esc, tree keyboard navigation, compact mode/search, real navigation history, QAction routes, actual SQLite KPI/filter behavior, saved themes/motion preferences, restore reauthentication, required fields, Uzbek TTF glyph coverage, responsive geometry, finite animations and theme text contrast.
+
+`capture_ui.py` generates 35 isolated Qt screenshots per scale with geometry assertions at 1366×768 and 1920×1080 logical sizes. Windows CI runs scale factors 1, 1.25 and 1.5. Packaged verification checks native Windows x64 GUI PE headers, offline application workflows, PDF/CSV contents and a second EXE process with authenticated persistence. Current Windows results are those attached to the specific successful Actions run; the older XML/JSON files committed under release/ belong to version 1.0.0.
+
+Native interactive Windows, physical monitor scaling and clean-machine sign-off are still unrun. Follow WINDOWS_RELEASE.md. Linux screenshot evidence does not establish Windows execution.
+
+---
+
+## Historical 1.0.0 results (retained for provenance)
+
 # Executed test results — 1.0.0 MVP
 
 Date: **2026-10-22**. Host: Linux x86_64. Python 3.12.14. PySide6 6.9.3. Qt platform: `offscreen`. All packages are installed in this project's `.venv`.

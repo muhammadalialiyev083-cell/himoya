@@ -10,6 +10,9 @@ from app.reports.export import esc, table as html_table, category
 from app.ui.fields import fields_for, LABELS
 from app.ui.forms import FormDialog
 from app.ui.widgets import button, setup_table, StepEditor
+from app.ui.components import EmptyState, SearchToolbar, FilterToolbar, StatusBadge, ConfirmDialog
+from app.ui.icons import icon
+from app.ui.style import tokens
 
 
 class Registry(QWidget):
@@ -17,6 +20,8 @@ class Registry(QWidget):
         super().__init__()
         self.main,self.service,self.entity = main,main.service,entity
         self.columns,self.provider,self.rows = columns,provider,[]
+        self.metric_filter=None
+        self.setObjectName("pageSurface")
         v = QVBoxLayout(self)
         v.setContentsMargins(0,8,0,0)
         if note:
@@ -24,30 +29,33 @@ class Registry(QWidget):
             label.setWordWrap(True)
             label.setObjectName("subtitle")
             v.addWidget(label)
-        h=QHBoxLayout()
-        self.search=QLineEdit()
-        self.search.setPlaceholderText("Qidirish: nom, kod, mas’ul yoki bo‘lim…")
-        self.search.textChanged.connect(self.populate)
+        searchbar=SearchToolbar();h=searchbar.body
+        self.search=searchbar.search
+        self.search.textChanged.connect(self.clear_metric_filter)
         h.addWidget(self.search,1)
         self.filter=QComboBox()
         self.filter.addItem("Barcha darajalar",None)
         for k,c in CATEGORIES.items(): self.filter.addItem(c,k)
-        self.filter.currentIndexChanged.connect(self.populate)
+        self.filter.currentIndexChanged.connect(self.clear_metric_filter)
         self.filter.setVisible(entity in ("business_process","bia_assessment","risk"))
         h.addWidget(self.filter)
-        h.addWidget(button("+ Qo‘shish",lambda:self.edit(),True))
-        h.addWidget(button("Tahrirlash",self.edit_selected))
-        h.addWidget(button("Tafsilot",self.detail))
-        h.addWidget(button("O‘chirish",self.delete,name="danger"))
-        v.addLayout(h)
+        v.addWidget(searchbar)
+        toolbar=FilterToolbar();actions=toolbar.body
+        self.add_button=button('+ Qo‘shish',lambda:self.edit(),True);self.add_button.setIcon(icon('plus'))
+        actions.addWidget(self.add_button)
+        self.selection_actions=[]
+        for title,handler,name in [('Tahrirlash',self.edit_selected,None),('Tafsilot',self.detail,None),('O‘chirish',self.delete,'danger')]:
+            control=button(title,handler,name=name);actions.addWidget(control);self.selection_actions.append(control)
+        actions.addStretch()
+        self.count_label=QLabel();actions.addWidget(self.count_label)
+        v.addWidget(toolbar)
         self.table=QTableWidget(0,len(columns))
         setup_table(self.table)
         self.table.setHorizontalHeaderLabels([title for key,title in columns])
         self.table.doubleClicked.connect(lambda _:self.detail())
+        self.table.itemSelectionChanged.connect(self.update_actions)
         v.addWidget(self.table,1)
-        self.empty=QLabel("Hozircha yozuvlar yo‘q. Boshlash uchun «Qo‘shish» tugmasini bosing.")
-        self.empty.setWordWrap(True)
-        self.empty.setObjectName("subtitle")
+        self.empty=EmptyState('Yozuvlar hali kiritilmagan','Boshlash uchun birinchi yozuvni yarating.',lambda:self.edit(),'+ Qo‘shish')
         v.addWidget(self.empty)
         self.toolbar=QHBoxLayout()
         v.addLayout(self.toolbar)
@@ -57,6 +65,11 @@ class Registry(QWidget):
         if entity == "continuity_plan":
             self.toolbar.addWidget(button("Tanlangan rejani PDFga chiqarish",self.export_plan,True))
         self.toolbar.addStretch()
+        self.update_actions()
+
+    def clear_metric_filter(self):
+        self.metric_filter=None
+        self.populate()
 
     def refresh(self):
         self.rows=self.provider() if self.provider else self.service.repo.all(self.entity)
@@ -66,6 +79,8 @@ class Registry(QWidget):
         query=self.search.text().casefold()
         severity=self.filter.currentData()
         shown=[r for r in self.rows if query in " ".join(str(v) for v in r.values()).casefold() and (not severity or r.get("category")==severity)]
+        if self.metric_filter=='high_risks':shown=[r for r in shown if r.get('category') in ('High','Critical')]
+        if self.metric_filter=='assessments':shown=[r for r in shown if self.service.latest_result(r['id'])]
         self.table.setRowCount(len(shown))
         self.displayed=shown
         for i,row in enumerate(shown):
@@ -76,13 +91,26 @@ class Registry(QWidget):
                 item.setData(Qt.ItemDataRole.UserRole,row["id"])
                 item.setToolTip(text)
                 if key=="category" and value:
-                    item.setForeground(QColor(COLORS[value]))
+                    item.setForeground(QColor({'Critical':'#ffabb8','High':'#ffc087','Medium':'#f2d675','Low':'#6ee7c4'}[value] if tokens().base=='#142331' else COLORS[value]))
                 self.table.setItem(i,j,item)
+                if key=='category' and value:
+                    badge=StatusBadge(text,value)
+                    self.table.setCellWidget(i,j,badge)
         self.table.resizeColumnsToContents()
         for i in range(len(self.columns)):
             self.table.setColumnWidth(i,min(290,max(92,self.table.columnWidth(i))))
         self.empty.setVisible(not shown)
+        self.table.setVisible(bool(shown))
+        prefix='Yuqori / kritik · ' if self.metric_filter=='high_risks' else 'Baholangan · ' if self.metric_filter=='assessments' else ''
+        self.count_label.setText(prefix+f'{len(shown)} / {len(self.rows)} yozuv')
+        self.empty.title.setText('Qidiruv natijasi yo‘q' if self.rows else 'Yozuvlar hali kiritilmagan')
+        self.empty.action.setVisible(not self.rows)
+        self.update_actions()
         self.empty.setText("Qidiruv bo‘yicha yozuv topilmadi." if self.rows else "Hozircha yozuvlar yo‘q. «Qo‘shish» orqali boshlang.")
+
+    def update_actions(self):
+        selected=self.table.currentRow()>=0
+        for control in self.selection_actions:control.setEnabled(selected)
 
     def selected(self):
         row=self.table.currentRow()
@@ -133,7 +161,7 @@ class Registry(QWidget):
                 else:
                     service.save(self.entity,data,record_id)
                 self.main.refresh_all()
-                self.main.statusBar().showMessage("Yozuv saqlandi.",6000)
+                self.main.notify("Yozuv saqlandi.")
                 return
             except (ValueError,sqlite3.Error) as exc:
                 self.main.show_error(exc)
@@ -146,7 +174,7 @@ class Registry(QWidget):
         if self.entity=="continuity_plan":message+=" Tiklash bosqichlari va ssenariydagi ushbu reja bog‘lanishlari o‘chiriladi."
         if self.entity=="scenario":message+=" Bog‘langan baholash natijalari ham o‘chiriladi."
         if self.entity in ("risk","recovery_strategy"):message+=" Rejalarda ushbu ixtiyoriy bog‘lanish olib tashlanadi."
-        if QMessageBox.question(self,"O‘chirishni tasdiqlash",message,QMessageBox.StandardButton.Yes|QMessageBox.StandardButton.No,QMessageBox.StandardButton.No)!=QMessageBox.StandardButton.Yes:return
+        if not ConfirmDialog.ask(self,"O‘chirishni tasdiqlash",message):return
         try:
             self.service.repo.delete(self.entity,rid)
             self.main.refresh_all()
@@ -159,6 +187,9 @@ class Registry(QWidget):
         layout=QVBoxLayout(dlg)
         browser=QTextBrowser()
         browser.setOpenExternalLinks(False)
+        t=tokens()
+        # Report HTML is reused as content, but on-screen colors follow the theme.
+        browser.document().setDefaultStyleSheet(f'body {{color:{t.text}; background:{t.surface};}} table {{border-collapse:collapse;}} th,td {{padding:8px; border:1px solid {t.border};}} th {{background:{t.raised}; color:{t.text};}}')
         browser.setHtml(body)
         layout.addWidget(browser)
         buttons=QDialogButtonBox(QDialogButtonBox.StandardButton.Close)

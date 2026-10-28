@@ -1,6 +1,6 @@
 # Known limitations and deferred scope
 
-- Native Windows compilation, all 79 automated tests and packaged offscreen launch/export/persistence checks passed in GitHub Actions. Native interactive Windows and clean-machine sign-off remain outstanding. See `WINDOWS_RELEASE.md` for the actual EXE size/hash and download.
+- The 1.0.0 release passed 79 Windows tests. For the UzHi 1.1.0 redesign, use the new Actions run and versioned release metadata; historical release/ files are not new build evidence. Native interactive Windows and clean-machine sign-off remain outstanding. See WINDOWS_RELEASE.md.
 - Interactive physical-display QA is unrun here; Qt offscreen widgets, form actions, screenshots and PDF rendering are tested. Font rendering and display scaling on actual Windows need release sign-off.
 - Single local administrator and one organization; no role management, multi-user server, cloud sync or concurrent shared-database editing. The normal app locks its data directory.
 - The password gates the UI; SQLite and backups are unencrypted. OS users who can read/modify the database have access to the data. There is no password-recovery backdoor.

@@ -1,7 +1,26 @@
 from PySide6.QtCore import QDate, Qt
+from PySide6.QtGui import QAction, QIcon
+from pathlib import Path
 from PySide6.QtWidgets import (QCheckBox, QComboBox, QDateEdit, QDialog, QDialogButtonBox,
-    QDoubleSpinBox, QFormLayout, QLabel, QLineEdit, QListWidget, QListWidgetItem,
+    QDoubleSpinBox, QFormLayout, QFrame, QHBoxLayout, QLabel, QLineEdit, QListWidget, QListWidgetItem,
+    QPushButton,
     QMessageBox, QPlainTextEdit, QScrollArea, QSpinBox, QVBoxLayout, QWidget)
+
+from app.ui.components import GradientPanel, UzHiLogo, FormSection, label
+from app.ui.icons import icon
+
+
+def password_toggle(widget):
+    widget.setMaxLength(1024)
+    action=QAction(icon("eye"),"Parolni ko‘rsatish",widget)
+    action.setCheckable(True)
+    def toggle(visible):
+        widget.setEchoMode(QLineEdit.EchoMode.Normal if visible else QLineEdit.EchoMode.Password)
+        action.setText("Parolni yashirish" if visible else "Parolni ko‘rsatish")
+        action.setIcon(icon("eye-off" if visible else "eye"))
+    action.toggled.connect(toggle)
+    widget.addAction(action,QLineEdit.ActionPosition.TrailingPosition)
+    return action
 
 
 class FormDialog(QDialog):
@@ -13,15 +32,20 @@ class FormDialog(QDialog):
         self.setMinimumSize(480, 350)
         self.fields, self.widgets = fields, {}
         layout = QVBoxLayout(self)
+        layout.setContentsMargins(22,20,22,20)
+        layout.setSpacing(12)
+        heading=QLabel(title)
+        heading.setObjectName("formHeading")
+        heading.setWordWrap(True)
+        layout.addWidget(heading)
         if note:
             label = QLabel(note)
             label.setWordWrap(True)
             layout.addWidget(label)
         scroll = QScrollArea()
         scroll.setWidgetResizable(True)
-        content = QWidget()
-        form = QFormLayout(content)
-        form.setFieldGrowthPolicy(QFormLayout.FieldGrowthPolicy.AllNonFixedFieldsGrow)
+        content = FormSection()
+        form = content.form
         values = values or {}
         for key, label, kind, options in fields:
             value = values.get(key)
@@ -61,11 +85,16 @@ class FormDialog(QDialog):
                 w.setMaxLength(500)
                 if kind == "password":
                     w.setEchoMode(QLineEdit.EchoMode.Password)
+                    password_toggle(w)
             w.setObjectName(key)
             self.widgets[key] = w
-            form.addRow(label, w)
+            caption=QLabel(label)
+            caption.setBuddy(w)
+            form.addRow(caption, w)
         scroll.setWidget(content)
         layout.addWidget(scroll)
+        self.error=QLabel();self.error.setObjectName("error");self.error.setWordWrap(True);self.error.hide()
+        layout.addWidget(self.error)
         buttons = QDialogButtonBox(QDialogButtonBox.StandardButton.Save | QDialogButtonBox.StandardButton.Cancel)
         buttons.button(QDialogButtonBox.StandardButton.Save).setText("Saqlash")
         buttons.button(QDialogButtonBox.StandardButton.Save).setObjectName("primary")
@@ -73,6 +102,19 @@ class FormDialog(QDialog):
         buttons.accepted.connect(self.accept)
         buttons.rejected.connect(self.reject)
         layout.addWidget(buttons)
+
+    def showEvent(self,event):
+        super().showEvent(event)
+        available=self.screen().availableGeometry()
+        self.resize(min(self.width(),available.width()-32),min(self.height(),available.height()-48))
+
+    def accept(self):
+        values=self.values()
+        for key,caption,kind,options in self.fields:
+            if '*' in caption and (values[key] is None or (isinstance(values[key],str) and not values[key].strip()) or (kind=='multi' and not values[key])):
+                self.error.setText(caption.replace('*','').strip()+': majburiy maydon.');self.error.show()
+                self.widgets[key].setFocus();return
+        super().accept()
 
     def values(self):
         out = {}
@@ -94,25 +136,74 @@ class FormDialog(QDialog):
         return out
 
 
-def authenticate(auth, parent=None):
-    first = not auth.configured()
-    fields = [("username","Administrator nomi","line",None),("password","Parol","password",None)]
-    if first:
-        fields.append(("confirm","Parolni takrorlang","password",None))
-    dlg = FormDialog("Administrator yaratish" if first else "UzluksizBCMS — Kirish", fields, parent=parent,
-                     note="Birinchi ishga tushirish. Kamida 10 belgili parol yarating." if first else "Mahalliy administrator hisobi bilan kiring.")
-    dlg.resize(500,360)
-    while dlg.exec() == QDialog.DialogCode.Accepted:
-        values = dlg.values()
+class LoginDialog(FormDialog):
+    """Dedicated authentication layout; success is granted only by Authentication."""
+    def __init__(self,auth,parent=None):
+        QDialog.__init__(self,parent)
+        self.auth=auth
+        self.first=not auth.configured()
+        self.setWindowTitle('UzHi — Administrator yaratish' if self.first else 'UzHi — Kirish')
+        self.setWindowIcon(QIcon(str(Path(__file__).resolve().parents[1]/"resources/icon.svg")))
+        self.resize(880,560);self.setMinimumSize(680,420)
+        self.fields=[('username','Administrator nomi','line',None),('password','Parol','password',None)]
+        if self.first:self.fields.append(('confirm','Parolni takrorlang','password',None))
+        self.widgets={};self.password_actions={}
+        layout=QHBoxLayout(self);layout.setContentsMargins(16,16,16,16);layout.setSpacing(24)
+        brand=GradientPanel(name='authBrand');left=QVBoxLayout(brand);left.setContentsMargins(28,24,28,24);left.setSpacing(16)
+        left.addWidget(UzHiLogo());left.addStretch()
+        left.addWidget(label('Har bir jarayon.\nUzluksiz himoya.','pageTitle',True))
+        left.addWidget(label('Biznes uzluksizligi va risklarni boshqarish','subtitle',True))
+        left.addWidget(label('Jarayonlar  →  BIA  →  Risklar\nTiklash rejasi  →  Ssenariylar','subtitle',True))
+        left.addStretch()
+        left.addWidget(label('MAHALLIY ISH MUHITI\nMa’lumotlar shu qurilmadagi SQLite bazada saqlanadi.','subtitle',True))
+        layout.addWidget(brand,1)
+        card=QWidget();right=QVBoxLayout(card);right.setContentsMargins(0,14,14,14);right.setSpacing(10)
+        right.addStretch()
+        right.addWidget(label('UzHi — Uzluksiz Himoya','formHeading',True))
+        right.addWidget(label('Administrator yaratish' if self.first else 'Xush kelibsiz','cardLabel'))
+        right.addWidget(label('Birinchi ishga tushirish. Kamida 10 belgili parol yarating.' if self.first else 'Mahalliy administrator hisobi bilan kiring.','subtitle',True))
+        for key,caption,kind,_ in self.fields:
+            field=QLineEdit();field.setObjectName(key);field.setMinimumHeight(25)
+            field.setMaxLength(100 if key=='username' else 1024)
+            field.setAccessibleName(caption)
+            if kind=='password':
+                field.setEchoMode(QLineEdit.EchoMode.Password)
+                self.password_actions[key]=password_toggle(field)
+            caption_label=label(caption);caption_label.setBuddy(field)
+            right.addWidget(caption_label);right.addWidget(field)
+            self.widgets[key]=field
+        self.error=label('','error',True);self.error.hide();right.addWidget(self.error)
+        self.submit=QPushButton('Administrator yaratish' if self.first else 'Kirish')
+        self.submit.setObjectName('primary');self.submit.setDefault(True);self.submit.clicked.connect(self.accept)
+        right.addWidget(self.submit)
+        cancel=QPushButton('Bekor qilish');cancel.clicked.connect(self.reject);right.addWidget(cancel)
+        right.addWidget(label('Parol tuzlangan PBKDF2-SHA256 xeshi bilan tekshiriladi.','subtitle',True))
+        right.addStretch()
+        form_scroll=QScrollArea();form_scroll.setWidgetResizable(True);form_scroll.setWidget(card)
+        layout.addWidget(form_scroll,1)
+        self.widgets['username'].setFocus()
+
+    def accept(self):
+        values=self.values()
         try:
-            if first:
-                if values["password"] != values["confirm"]:
-                    raise ValueError("Parollar mos kelmadi.")
-                auth.create(values["username"],values["password"])
-            elif not auth.verify(values["username"],values["password"]):
-                raise ValueError("Hisob yoki parol noto‘g‘ri.")
-            return True
+            if not values['username'].strip() or not values['password']:
+                raise ValueError('Administrator nomi va parolni kiriting.')
+            if self.first:
+                if values['password']!=values['confirm']:raise ValueError('Parollar mos kelmadi.')
+                self.auth.create(values['username'],values['password'])
+            elif not self.auth.verify(values['username'],values['password']):
+                raise ValueError('Hisob yoki parol noto‘g‘ri.')
         except ValueError as exc:
-            QMessageBox.warning(dlg,"Kirish",str(exc))
-            dlg.widgets["password"].clear()
-    return False
+            self.error.setText(str(exc));self.error.show()
+            self.widgets['password'].clear()
+            if 'confirm' in self.widgets:self.widgets['confirm'].clear()
+            self.widgets['password'].setFocus()
+            return
+        # Do not retain cleartext passwords after authentication.
+        for key in ('password','confirm'):
+            if key in self.widgets:self.widgets[key].clear()
+        QDialog.accept(self)
+
+
+def authenticate(auth,parent=None):
+    return LoginDialog(auth,parent).exec()==QDialog.DialogCode.Accepted

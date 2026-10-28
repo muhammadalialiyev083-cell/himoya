@@ -1,6 +1,6 @@
 # Architecture and database
 
-Version 1.0.0; Python 3.12 x64; PySide6 6.9.3; SQLite through the standard-library `sqlite3` driver. Presentation is native Qt Widgets styled with QSS. There is no web server or online runtime dependency.
+Version 1.1.0; Python 3.12 x64; PySide6 6.9.3; SQLite through the standard-library `sqlite3` driver. Presentation is native Qt Widgets styled with QSS. There is no web server or online runtime dependency.
 
 ## Layers
 
@@ -48,3 +48,8 @@ Backups use SQLite's online backup API to a temporary file, run integrity/foreig
 PBKDF2-HMAC-SHA256 uses 600,000 iterations and a 32-byte random salt; digest comparison is constant time. There is no hardcoded administrator or password. SQL values are bound parameters; dynamic table/column identifiers come from internal allowlists. Authentication protects the application session; SQLite and backup files are not encrypted and remain accessible to an OS user with file access. Apply OS ACLs and disk encryption separately. Logs record session events only, never passwords, digest values or business record contents. Crash errors shown to users avoid dumping exception details.
 
 One normal application instance per data directory is enforced by Qt's `QLockFile`. Test-only CLI verification creates an isolated empty directory and does not open normal user data.
+
+
+## UzHi presentation layer
+
+`style.py` owns semantic palettes/QSS; `icons.py` renders offline vectors; `components.py` contains reusable native controls; `navigation.py` defines the single route catalog and cursor-based history. `window.py` binds existing BCMS screens to the shell. UI preferences are separate INI settings beside the unchanged SQLite file. See UZHI_DESIGN_SYSTEM.md for the component mapping.
