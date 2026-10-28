@@ -1,10 +1,17 @@
 """Create a clean standalone source delivery; never include venvs or user databases."""
+import argparse
 import hashlib
+import sys
 from pathlib import Path
 import zipfile
 
 root=Path(__file__).resolve().parent.parent
-output=root/"release"/"UzluksizBCMS-Desktop-1.0.0-source.zip"
+sys.path.insert(0,str(root))
+from app import __version__
+parser=argparse.ArgumentParser()
+parser.add_argument("--output",type=Path,default=root/"release"/f"UzluksizBCMS-Desktop-{__version__}-source.zip")
+output=parser.parse_args().output
+output.parent.mkdir(parents=True,exist_ok=True)
 included=[]
 for folder in ("app","tests","docs","scripts","assets",".github"):
     for path in (root/folder).rglob("*"):

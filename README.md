@@ -1,21 +1,14 @@
-# UzluksizBCMS Desktop 1.0.0 MVP
+# UzHi — UzluksizBCMS Desktop 1.1.0
 
-## Windows EXE — GitHub orqali yuklab olish
+Native, offline-first Python 3.12 / PySide6 business continuity application with local SQLite storage. Uzbek Latin interface. The UzHi redesign follows the original RiskGuard shield/infinity identity, navy/teal surfaces and native desktop navigation.
 
-**Tayyor Windows EXE:** [UzluksizBCMS.exe — yuklab olish](https://github.com/muhammadalialiyev083-cell/himoya/releases/download/windows-mvp-6/UzluksizBCMS.exe) (50,674,955 bayt). Ushbu reliz Windows’da 79 avtomatik sinov va tayyor paket tekshiruvidan o‘tgan. Bevosita interaktiv Windows tekshiruvi alohida qoladi.
+**Windows download:** [Versioned releases](https://github.com/muhammadalialiyev083-cell/himoya/releases). Choose a successful **v1.1.0-uzhi** preview and download **UzluksizBCMS.exe**. End users do not need Python. Each release includes its actual SHA-256 and automated Windows verification. Native interactive Windows sign-off remains outstanding; see [Windows release checks](docs/WINDOWS_RELEASE.md).
 
-Eng qulay yo‘l: [GitHub Releases](https://github.com/muhammadalialiyev083-cell/himoya/releases) sahifasida muvaffaqiyatli yig‘ilgan Windows MVP relizini ochib, **Assets → UzluksizBCMS.exe**ni yuklab oling. Reliz faqat avtomatik sinovlar va paket tekshiruvlari o‘tgandan keyin chiqariladi. Agar reliz hali ko‘rinmasa, quyidagi Actions sahifasida yig‘ish holatini tekshiring.
+**Build evidence:** [Windows Actions](https://github.com/muhammadalialiyev083-cell/himoya/actions/workflows/windows-build.yml). PRs produce downloadable test artifacts; successful main/tag builds publish a versioned preview after tests, frozen EXE launch, separate-process restart and scaled UI checks pass.
 
-1. [Actions / Build Windows EXE](https://github.com/muhammadalialiyev083-cell/himoya/actions/workflows/windows-build.yml) sahifasini oching va GitHub hisobingizga kiring.
-2. Eng yangi yig‘ish muvaffaqiyatli tugaganini (yashil belgi) tekshiring. Xato yoki navbat holatida EXE hali tayyor emas.
-3. Yig‘ish sahifasining **Artifacts** bo‘limidan **UzluksizBCMS-Windows-x64** faylini yuklab oling.
-4. ZIPni oching; `dist/UzluksizBCMS.exe` — Windows dasturi. Foydalanuvchiga Python o‘rnatish kerak emas.
+The desktop now includes a dedicated login/first-run screen, searchable six-group sidebar, compact mode, five native menus, real navigation history, interactive database KPI cards, setup checklist/catalog, both themes, reduced-motion settings and a bundled offline manual. [Design mapping and preserved rules](docs/UZHI_DESIGN_SYSTEM.md) · [Before/after screenshots](docs/screenshots/) · [User manual](USER_MANUAL.md).
 
-Faqat manba kodi kerak bo‘lsa: [Download ZIP](https://github.com/muhammadalialiyev083-cell/himoya/archive/refs/heads/main.zip). Bu ZIP tayyor Windows EXE emas. Yig‘ish avtomatik `main`ga push qilinganda yoki Actionsdagi `Run workflow` orqali ishlaydi. Artefaktni yuklash uchun GitHubga kirish talab qilinishi mumkin.
-
-Offline-first, native PySide6/Qt Widgets business continuity research application. The interface is Uzbek Latin. All business records are stored in a local SQLite database; there is no server, browser frontend, online database, telemetry or API key.
-
-**Delivery status:** implemented and tested on Linux with Qt's offscreen platform. Windows compilation is performed separately by the GitHub Actions Windows runner. Check the latest run and its actual artifacts for its outcome; the initial Linux test documents do not establish Windows success. Native interactive Windows sign-off remains separate. Do not rename the Linux executable to `.exe`.
+No server, telemetry, browser frontend, API key or new scientific algorithm is introduced. The original authentication, data directory, BIA weights and risk thresholds are preserved.
 
 ## Start from source
 
@@ -33,7 +26,7 @@ py -3.12 -m venv .venv
 Linux development:
 
 ```bash
-cd /workspace/UzluksizBCMS-Desktop
+cd himoya
 python3 -m venv .venv
 .venv/bin/python -m pip install --cache-dir .cache/pip -r requirements-dev.txt
 .venv/bin/python app/main.py
@@ -81,7 +74,7 @@ On a Windows 10/11 x64 build machine with Python 3.12 x64:
 
 This installs project-local dependencies, runs tests, renders the application icon, builds a real windowed one-file PyInstaller executable, launches that executable in an isolated smoke test, validates its database persistence and PDF/CSV exports, and reports SHA-256 and file size. End users only need the resulting `dist\UzluksizBCMS.exe`; they do not need Python or the development venv. Read [Windows release verification](docs/WINDOWS_RELEASE.md) before sign-off.
 
-The GitHub Actions workflow in `.github/workflows/windows-build.yml` builds on Windows after a push to `main` and supports manual dispatch. The owner explicitly authorized uploading this standalone project into the initially empty `himoya` repository after the in-chat artifact download failed. No pre-existing application code was replaced.
+The Windows workflow runs for pull requests, main/tag pushes and manual dispatch. Pull requests upload test artifacts; successful main/tag builds publish a versioned preview. The existing application and persistent data format are retained.
 
 ## Documentation
 

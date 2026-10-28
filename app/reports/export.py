@@ -8,6 +8,7 @@ from pathlib import Path
 from PySide6.QtCore import QMarginsF
 from PySide6.QtGui import QFont, QPageLayout, QPageSize, QPdfWriter, QTextDocument
 
+from app import __version__
 from app.algorithms.scoring import CATEGORIES
 from app.core.fonts import report_font
 
@@ -41,7 +42,7 @@ def table(headers, rows):
 
 def report_html(data, kind="assessment", plan_id=None):
     titles = {"assessment":"Biznes uzluksizligini baholash hisoboti", "register":"Risk va ustuvorlik reyestri", "plan":"Biznes uzluksizligi rejasi"}
-    body = f'<h1>{titles[kind]}</h1><h2>{esc(data["organization"]["name"])}</h2><p>UzluksizBCMS Desktop 1.0.0 • {esc(data["generated"])}</p>'
+    body = f'<h1>{titles[kind]}</h1><h2>{esc(data["organization"]["name"])}</h2><p>UzluksizBCMS Desktop {__version__} • {esc(data["generated"])}</p>'
     if kind == "plan":
         plan = next((p for p in data["plans"] if p["id"] == plan_id), None)
         if not plan:
@@ -84,7 +85,7 @@ def write_pdf(path, data, kind="assessment", plan_id=None):
     path = Path(path)
     writer = QPdfWriter(str(path))
     writer.setTitle("UzluksizBCMS — " + data["organization"]["name"])
-    writer.setCreator("UzluksizBCMS Desktop 1.0.0")
+    writer.setCreator("UzluksizBCMS Desktop "+__version__)
     writer.setResolution(144)
     writer.setPageSize(QPageSize(QPageSize.PageSizeId.A4))
     writer.setPageMargins(QMarginsF(14,14,14,14), QPageLayout.Unit.Millimeter)

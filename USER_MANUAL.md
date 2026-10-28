@@ -1,3 +1,19 @@
+# UzHi 1.1.0 — interfeys va tezkor qo‘llanma
+
+Birinchi ishga tushirishda administrator nomi va kamida 10 belgili parol yarating. Parolni takrorlang. Keyingi kirishda shu hisobdan foydalaning. Ko‘z belgisi parolni ko‘rsatadi/yashiradi; Enter — kirish, Esc — bekor qilish. Xatolar forma ichida ko‘rsatiladi. Standart parol mavjud emas.
+
+Yon menyu oltita guruhdan iborat. Guruhlarni ochish/yig‘ish mumkin. Ctrl+K modullarni qidiradi, Ctrl+B ixcham ko‘rinishni yoqadi. Ixcham rejimda guruh belgisini bosing; to‘liq menyu ochiladi. Tanlangan sahifa menyuda ajratiladi. Alt+Left / Alt+Right faqat sahifalar tarixini boshqaradi; ular bazadagi o‘zgarishlarni bekor qilmaydi.
+
+Fayl menyusida yangi yozuv (Ctrl+N), PDF/CSV eksport, zaxira nusxa va chiqish (Ctrl+Q) mavjud. Boshqaruv — asosiy modullar; Ko‘rinish — mavzu, menyu va tarix; Asboblar — ssenariy, hisobot, yangilash (F5), parol va tiklash; Yordam — ushbu qo‘llanma (F1) va dastur haqida.
+
+Boshlang‘ich sozlash haqiqiy yozuvlar holatini ko‘rsatadi: tashkilot → bo‘lim → jarayon → BIA → risk → reja. Interaktiv katalogdagi tugmalar mavjud modullarni ochadi. Tashkilot profili va bo‘limlar bir sahifada; strategiyalar va rejalar alohida tablarda. Reja bosqichlari uchun rejani tanlang → Tahrirlash → Tiklash tartibi.
+
+Dashboard kartalari SQLite bazasidagi haqiqiy sonlarni ko‘rsatadi. Kritik jarayon kartasi BIA ≥ 75, yuqori/kritik risk kartasi ball ≥ 11 bo‘lgan yozuvlarni ochadi. Baholangan ssenariy kartasi saqlangan natijasi bor ssenariylarni ochadi. Ma’lumot yo‘q bo‘lsa, 0 va boshlash yo‘riqnomasi ko‘rsatiladi; tayyorlik ballari o‘ylab topilmaydi.
+
+Sozlamalarda yorug‘/qorong‘i mavzu va dekorativ animatsiyalarni tanlang. Windows kamaytirilgan animatsiya sozlamasi ham hisobga olinadi. Tanlovlar va menyu holati `ui.ini`da, biznes ma’lumotlari avvalgi bazada saqlanadi. Yangi versiya uchun bazani o‘chirmang yoki ko‘chirmang.
+
+Yozuvlar jadvalida qidirish va mavjud daraja filtrlari ishlaydi. Yozuv tanlanganda tahrirlash/tafsilot/o‘chirish amallari yoqiladi. Majburiy maydonlar `*` bilan belgilangan. Saqlash/Bekor qilish aniq ajratilgan; o‘chirish va tiklash tasdiq talab qiladi. Eksport vaqtida jarayon belgisi ko‘rinadi; tugagach xabar chiqadi.
+
 # UzluksizBCMS Desktop — Foydalanuvchi qo‘llanmasi
 
 Versiya: **1.0.0 MVP**. Asosiy til: o‘zbek lotin. Internet kerak emas.

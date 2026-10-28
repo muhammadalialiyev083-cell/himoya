@@ -1,9 +1,10 @@
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QColor, QPainter, QFont
 from PySide6.QtWidgets import (QAbstractItemView, QFrame, QHBoxLayout, QLabel, QPushButton,
-    QTableWidget, QTableWidgetItem, QVBoxLayout, QWidget)
+    QTableWidget, QTableWidgetItem, QVBoxLayout, QWidget, QHeaderView)
 
 from app.algorithms.scoring import COLORS, risk_score
+from app.ui.style import tokens
 
 
 def button(text, action, primary=False, name=None):
@@ -32,7 +33,7 @@ class Bars(QWidget):
     def __init__(self, maximum=100, parent=None):
         super().__init__(parent)
         self.maximum, self.rows = maximum, []
-        self.setMinimumHeight(180)
+        self.setMinimumHeight(150)
 
     def set_rows(self, rows):
         self.rows = rows[:8]
@@ -42,23 +43,23 @@ class Bars(QWidget):
         p = QPainter(self)
         p.setRenderHint(QPainter.RenderHint.Antialiasing)
         if not self.rows:
-            p.setPen(QColor("#708797"))
-            p.drawText(self.rect(), Qt.AlignmentFlag.AlignCenter,"Tahlil qo‘shilgach, diagramma ko‘rinadi.")
+            p.setPen(QColor(tokens().muted))
+            p.drawText(self.rect().adjusted(8,8,-8,-8), Qt.AlignmentFlag.AlignCenter|Qt.TextFlag.TextWordWrap,"Tahlil kiritilgach, haqiqiy ma’lumotlar diagrammasi ko‘rinadi.")
             return
         label_width = min(180, int(self.width()*.40))
         row_height = min(36, max(23,self.height()//len(self.rows)))
         available = max(20,self.width()-label_width-60)
         for i,(name,value,color) in enumerate(self.rows):
             y = i*row_height+6
-            p.setPen(QColor("#354e61"))
+            p.setPen(QColor(tokens().text))
             label = p.fontMetrics().elidedText(name,Qt.TextElideMode.ElideRight,label_width-8)
             p.drawText(0,y+15,label)
             p.setPen(Qt.PenStyle.NoPen)
-            p.setBrush(QColor("#e9eff4"))
+            p.setBrush(QColor(tokens().raised))
             p.drawRoundedRect(label_width,y,available,20,4,4)
             p.setBrush(QColor(color))
             p.drawRoundedRect(label_width,y,int(available*min(value/self.maximum,1)),20,4,4)
-            p.setPen(QColor("#354e61"))
+            p.setPen(QColor(tokens().text))
             p.drawText(label_width+available+7,y+15,f"{value:g}")
 
 
@@ -70,9 +71,9 @@ class RiskMatrix(QTableWidget):
         self.setEditTriggers(QAbstractItemView.EditTrigger.NoEditTriggers)
         self.setSelectionMode(QAbstractItemView.SelectionMode.NoSelection)
         self.setMaximumHeight(220)
-        self.horizontalHeader().setStretchLastSection(True)
-        for col in range(5):
-            self.setColumnWidth(col,100)
+        self.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
+        self.verticalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
+        self.setMinimumHeight(205)
         self.update_risks([])
 
     def update_risks(self, risks):
@@ -99,7 +100,8 @@ class StepEditor(QWidget):
         self.table = QTableWidget(0,2)
         self.table.setHorizontalHeaderLabels(["Amal / tartib","Bajarildi"])
         self.table.horizontalHeader().setStretchLastSection(False)
-        self.table.setColumnWidth(0,390)
+        self.table.horizontalHeader().setSectionResizeMode(0,QHeaderView.ResizeMode.Stretch)
+        self.table.horizontalHeader().setSectionResizeMode(1,QHeaderView.ResizeMode.ResizeToContents)
         self.table.setMaximumHeight(140)
         v.addWidget(self.table)
         h=QHBoxLayout()

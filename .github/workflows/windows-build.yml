@@ -1,6 +1,8 @@
 name: Build Windows EXE
 on:
   workflow_dispatch:
+  pull_request:
+    branches: [main]
   push:
     branches: [main]
     tags: ['v*']
@@ -33,6 +35,15 @@ jobs:
             '```' | Add-Content $env:GITHUB_STEP_SUMMARY
             exit 1
           }
+      - name: Capture UI at 100, 125 and 150 percent scale
+        shell: pwsh
+        run: |
+          $env:QT_QPA_PLATFORM = 'offscreen'
+          foreach ($scale in @('1', '1.25', '1.5')) {
+            $env:QT_SCALE_FACTOR = $scale
+            & .venv/Scripts/python.exe scripts/capture_ui.py --output "release/visual-scale-$scale"
+            if ($LASTEXITCODE -ne 0) { throw "Visual checks failed at scale $scale" }
+          }
       - name: Publish failure diagnostic
         if: failure()
         shell: pwsh
@@ -61,8 +72,22 @@ jobs:
             release/windows-test-results.xml
             release/win32-package-verification.json
             release/packaged-smoke-*/result.json
+            release/packaged-smoke-*/restart-result.json
+            release/SHA256SUMS.txt
           if-no-files-found: error
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: UzHi-UI-test-evidence
+          path: |
+            release/ci-build.log
+            release/windows-test-results.xml
+            release/visual-scale-*/visual-review.json
+            release/packaged-smoke-*/failure.txt
+            release/packaged-smoke-*/restart-failure.txt
+          if-no-files-found: warn
   release:
+    if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/v'))
     needs: windows
     runs-on: ubuntu-latest
     permissions:
@@ -76,18 +101,20 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GH_REPO: ${{ github.repository }}
-          RELEASE_TAG: windows-mvp-${{ github.run_number }}
+          RELEASE_TAG: v1.1.0-uzhi.${{ github.run_number }}
           RELEASE_COMMIT: ${{ github.sha }}
         shell: bash
         run: |
           set -euo pipefail
           test -f package/dist/UzluksizBCMS.exe
           cat > release-notes.md <<'NOTES'
-          Windows 10/11 x64 one-file PyInstaller build of UzluksizBCMS Desktop 1.0.0 MVP.
+          UzHi — UzluksizBCMS Desktop 1.1.0. Native Windows x64 one-file PyInstaller build.
+
+          Redesigned login, original UzHi identity, nested searchable navigation, native menus, history, real SQLite KPI cards, light/dark themes and reduced-motion settings. Existing BCMS calculations and data directory are preserved.
 
           Download UzluksizBCMS.exe below. End users do not need Python.
 
-          This build passed the automated Windows test suite and a packaged Qt/SQLite/authentication/restart/backup/PDF/CSV smoke test. The GUI check uses Qt's offscreen platform; native interactive Windows and display-scaling sign-off remains a separate manual check. See docs/WINDOWS_RELEASE.md.
+          This prerelease passed the automated Windows test suite and a packaged Qt/SQLite/authentication/backup/PDF/CSV smoke test and persistence across two executable processes. UI screenshots and geometry checks at 100%, 125% and 150% scale are attached to the Actions run. The GUI check uses Qt's offscreen platform; native interactive Windows and display-scaling sign-off remains a separate manual check. See docs/WINDOWS_RELEASE.md.
 
           The application is unsigned. No database encryption, ISO certification or DGU registration is claimed.
           NOTES
@@ -95,6 +122,7 @@ jobs:
             package/dist/UzluksizBCMS.exe \
             package/release/win32-package-verification.json \
             package/release/windows-test-results.xml \
+            package/release/SHA256SUMS.txt \
             --repo "$GH_REPO" --target "$RELEASE_COMMIT" --prerelease \
-            --title 'UzluksizBCMS Desktop 1.0.0 — Windows MVP' \
+            --title 'UzHi Desktop 1.1.0 — verified Windows preview' \
             --notes-file release-notes.md

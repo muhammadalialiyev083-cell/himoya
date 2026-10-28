@@ -1,5 +1,6 @@
 """Executable self-test: isolated data, real Qt window, DB, reports and restart."""
 import json
+import os
 import secrets
 import traceback
 from pathlib import Path
@@ -20,13 +21,14 @@ def run_smoke(application, output):
     db=None
     window=None
     try:
-        password=secrets.token_urlsafe(24)
+        password=os.environ.get("UZHI_SMOKE_PASSWORD") or secrets.token_urlsafe(24)
         db=Database(output/"smoke.sqlite3")
         auth=Authentication(db)
         auth.create("smoke-admin",password)
         assert auth.verify("smoke-admin",password)
         assert not auth.verify("smoke-admin",password+"x")
         window=MainWindow(db)
+        window.set_motion(False)
         window.show()
         application.processEvents()
         add_demo(window.service)
@@ -62,7 +64,7 @@ def run_smoke(application, output):
         window=None
         db.restore(output/"backup.sqlite3")
         assert BCMS(db).metrics()==metrics
-        report={"status":"passed","version":"1.0.0","platform":__import__("sys").platform,
+        report={"status":"passed","version":"1.1.0","platform":__import__("sys").platform,
                 "qt_window":True,"pages":9,"authentication":True,"restart_persistence":True,
                 "backup_restore":True,"metrics":metrics,
                 "exports":["assessment.pdf","register.pdf","plan.pdf","register.csv"],
@@ -71,6 +73,33 @@ def run_smoke(application, output):
         return 0
     except Exception:
         (output/"failure.txt").write_text(traceback.format_exc(),encoding="utf-8")
+        return 1
+    finally:
+        if window:window.close()
+        if db:db.close()
+
+
+def run_restart_smoke(application,output):
+    """Second executable process: authenticate and verify the first process's data."""
+    output=Path(output).resolve()
+    report_path=output/'result.json'
+    if not report_path.is_file() or not os.environ.get('UZHI_SMOKE_PASSWORD'):return 2
+    previous=json.loads(report_path.read_text(encoding='utf-8'))
+    if previous.get('status')!='passed' or not (output/'smoke.sqlite3').is_file():return 2
+    db=None;window=None
+    try:
+        db=Database(output/'smoke.sqlite3')
+        assert Authentication(db).verify('smoke-admin',os.environ['UZHI_SMOKE_PASSWORD'])
+        window=MainWindow(db);window.set_motion(False);window.show();application.processEvents()
+        assert window.service.metrics()==previous['metrics']
+        assert window.plans.table.rowCount()==1
+        assert window.cards['processes'].text()==str(previous['metrics']['processes'])
+        result={'status':'passed','platform':__import__('sys').platform,'new_executable_process':True,
+                'authentication':True,'sqlite_persistence':True,'metrics':window.service.metrics()}
+        (output/'restart-result.json').write_text(json.dumps(result,indent=2),encoding='utf-8')
+        return 0
+    except Exception:
+        (output/'restart-failure.txt').write_text(traceback.format_exc(),encoding='utf-8')
         return 1
     finally:
         if window:window.close()
